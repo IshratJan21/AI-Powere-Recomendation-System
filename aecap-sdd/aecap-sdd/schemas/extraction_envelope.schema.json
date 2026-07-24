@@ -1,0 +1,81 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aecap.dev/schemas/extraction_envelope.schema.json",
+  "title": "ExtractionEnvelope",
+  "description": "Canonical structured output produced by the AI pipeline for every ingested message.",
+  "type": "object",
+  "required": [
+    "extraction_id",
+    "tenant_id",
+    "source",
+    "intent",
+    "urgency",
+    "confidence",
+    "summary",
+    "entities",
+    "prompt_version",
+    "model"
+  ],
+  "properties": {
+    "extraction_id": { "type": "string", "format": "uuid" },
+    "tenant_id":     { "type": "string", "format": "uuid" },
+    "source": {
+      "type": "object",
+      "required": ["channel"],
+      "properties": {
+        "channel": {
+          "type": "string",
+          "enum": ["gmail", "outlook", "slack", "whatsapp", "telegram", "pdf_upload", "csv_upload", "manual"]
+        },
+        "external_id": { "type": "string" }
+      }
+    },
+    "intent": {
+      "type": "string",
+      "enum": [
+        "sales_inquiry",
+        "support_request",
+        "billing_question",
+        "complaint",
+        "meeting_request",
+        "information_request",
+        "spam",
+        "other"
+      ]
+    },
+    "urgency": { "type": "string", "enum": ["low", "medium", "high", "critical"] },
+    "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+    "summary": { "type": "string", "maxLength": 1000 },
+    "entities": {
+      "type": "object",
+      "properties": {
+        "person":  { "type": "object" },
+        "org":     { "type": "object" },
+        "product": { "type": "object" },
+        "dates":   { "type": "array", "items": { "type": "string" } },
+        "amounts": { "type": "array", "items": { "type": "object" } }
+      },
+      "additionalProperties": true
+    },
+    "missing_fields":    { "type": "array", "items": { "type": "string" } },
+    "suggested_actions": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "create_crm_lead",
+          "create_ticket",
+          "save_to_db",
+          "save_to_sheet",
+          "notify_slack",
+          "send_email",
+          "create_calendar_event",
+          "trigger_webhook"
+        ]
+      }
+    },
+    "prompt_version": { "type": "string" },
+    "model":          { "type": "string" }
+  },
+  "additionalProperties": false
+}

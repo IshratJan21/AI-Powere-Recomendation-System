@@ -1,0 +1,46 @@
+┌─────────────────────────────────────────────────────────────────────┐
+│                       CLIENT TIER (Vercel)                          │
+│  Next.js 14 (App Router) · TypeScript · Tailwind · Shadcn UI        │
+│  Dashboard · Inbox View · Config UI · Admin Console                 │
+└─────────────────────────────────────────────────────────────────────┘
+                                │  HTTPS / JWT (Supabase)
+                                ▼
+┌─────────────────────────────────────────────────────────────────────┐
+│                    API GATEWAY (FastAPI @ Railway)                  │
+│  Auth middleware · Rate limiter · RequestID · CORS · Idempotency    │
+└─────────────────────────────────────────────────────────────────────┘
+                                │
+     ┌──────────────────────────┼───────────────────────────┐
+     ▼                          ▼                           ▼
+┌──────────┐            ┌────────────────┐          ┌───────────────┐
+│ Ingestion│            │  Application   │          │   Automation  │
+│ Adapters │──events──► │  Use Cases     │──jobs──► │   Runtime     │
+│          │            │  (Orchestrator)│          │   (n8n)       │
+│ Gmail    │            │                │          │               │
+│ Outlook  │            │  Message Svc   │          │ CRM Push      │
+│ Slack    │            │  AI Svc        │          │ Sheets Push   │
+│ Webhook  │            │  Action Svc    │          │ Slack Notify  │
+│ Upload   │            │  Tenant Svc    │          │ Calendar      │
+└──────────┘            └────────────────┘          │ Webhooks      │
+                                │                   └───────────────┘
+                                ▼
+                        ┌───────────────┐
+                        │  AI PROVIDER  │
+                        │  ABSTRACTION  │
+                        │  ┌─────────┐  │
+                        │  │ Gemini  │  │
+                        │  │ OpenAI  │  │
+                        │  │ Fallback│  │
+                        │  └─────────┘  │
+                        └───────────────┘
+                                │
+                                ▼
+┌─────────────────────────────────────────────────────────────────────┐
+│               PERSISTENCE (Supabase Postgres + Storage)             │
+│  RLS-secured tables · Row-level tenancy · pgvector · Object storage │
+└─────────────────────────────────────────────────────────────────────┘
+                                │
+                                ▼
+┌─────────────────────────────────────────────────────────────────────┐
+│   OBSERVABILITY: OpenTelemetry → Grafana Cloud · Sentry · Logtail   │
+└─────────────────────────────────────────────────────────────────────┘

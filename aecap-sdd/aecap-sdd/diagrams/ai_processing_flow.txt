@@ -1,0 +1,44 @@
+Raw Input
+   │
+   ▼
+[1] Content Normalizer
+     · MIME parsing, HTML→text, attachment extraction
+     · PDF/CSV via unstructured.io + pypdf; OCR fallback (Tesseract)
+   │
+   ▼
+[2] PII Detector & Redactor  (Presidio)
+     · Optional per-tenant policy; produces redacted twin for LLM
+   │
+   ▼
+[3] Language Detect + Chunker
+     · fastText langid; token-aware chunking (max 8k)
+   │
+   ▼
+[4] Retrieval (optional RAG)
+     · pgvector lookup for tenant knowledge base / past threads
+   │
+   ▼
+[5] Prompt Assembly
+     · SystemPrompt + FewShotBank(tenant) + Schema + Content
+   │
+   ▼
+[6] LLM Call (Provider Abstraction)
+     · Structured Output mode (Gemini responseSchema / OpenAI json_schema)
+     · Timeout + retry + fallback provider
+   │
+   ▼
+[7] Schema Validator (Pydantic)
+     · If invalid → self-repair loop (max 2) → else quarantine
+   │
+   ▼
+[8] Post-Processors
+     · Entity canonicalization (email/phone normalize, currency parse)
+     · Urgency scorer (rules + LLM signal blend)
+     · Confidence calibration
+   │
+   ▼
+[9] Missing-Field Detector
+     · Compares required schema fields vs extracted; flags gaps
+   │
+   ▼
+[10] Emit → ExtractionResult (persisted + event on bus)

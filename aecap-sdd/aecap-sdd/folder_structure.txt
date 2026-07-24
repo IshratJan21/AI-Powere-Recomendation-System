@@ -1,0 +1,77 @@
+aecap/
+├── apps/
+│   ├── web/                          # Next.js frontend
+│   │   ├── app/                      # App Router
+│   │   ├── components/               # Shadcn UI + custom
+│   │   ├── features/                 # Feature-sliced (inbox, rules, admin)
+│   │   ├── lib/                      # api client, supabase client, hooks
+│   │   ├── styles/
+│   │   └── tests/
+│   │
+│   └── api/                          # FastAPI backend (modular monolith)
+│       ├── src/
+│       │   ├── main.py               # ASGI app factory
+│       │   ├── core/                 # config, logging, security, di
+│       │   ├── domain/               # pure entities, value objects
+│       │   │   ├── message/
+│       │   │   ├── extraction/
+│       │   │   ├── action/
+│       │   │   └── tenant/
+│       │   ├── application/          # use cases, orchestrators
+│       │   │   ├── ingest_message/
+│       │   │   ├── run_extraction/
+│       │   │   ├── dispatch_action/
+│       │   │   └── ports/            # abstract interfaces
+│       │   ├── infrastructure/       # adapters implementing ports
+│       │   │   ├── ai/
+│       │   │   │   ├── gemini_adapter.py
+│       │   │   │   ├── openai_adapter.py
+│       │   │   │   └── provider_router.py
+│       │   │   ├── sources/
+│       │   │   │   ├── gmail/
+│       │   │   │   ├── outlook/
+│       │   │   │   ├── slack/
+│       │   │   │   ├── upload/
+│       │   │   │   └── manual/
+│       │   │   ├── actions/
+│       │   │   │   ├── crm/
+│       │   │   │   ├── ticketing/
+│       │   │   │   ├── sheets/
+│       │   │   │   ├── slack/
+│       │   │   │   ├── email/
+│       │   │   │   ├── calendar/
+│       │   │   │   └── webhook/
+│       │   │   ├── persistence/
+│       │   │   │   ├── supabase/
+│       │   │   │   └── repositories/
+│       │   │   └── automation/
+│       │   │       └── n8n_client.py
+│       │   ├── interfaces/           # transport layer
+│       │   │   ├── http/
+│       │   │   │   ├── v1/
+│       │   │   │   └── middleware/
+│       │   │   └── events/
+│       │   └── shared/               # errors, types, utils
+│       ├── tests/
+│       │   ├── unit/
+│       │   ├── integration/
+│       │   └── contract/
+│       └── pyproject.toml
+│
+├── automation/
+│   └── n8n/                          # Exported workflows (JSON, versioned)
+│
+├── packages/
+│   ├── schemas/                      # JSON Schemas (source of truth)
+│   ├── prompts/                      # Prompt registry (yaml, versioned)
+│   └── sdk-ts/                       # Optional TS SDK for external clients
+│
+├── infra/
+│   ├── supabase/                     # migrations, RLS policies, seed
+│   ├── railway/
+│   ├── vercel/
+│   └── terraform/                    # optional IaC
+│
+├── .github/workflows/                # CI/CD
+├── docs/                             # ADRs, runbooks, this SDD
+└── docker-compose.yml                # local dev

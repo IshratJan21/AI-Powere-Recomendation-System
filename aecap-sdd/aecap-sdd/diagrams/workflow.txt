@@ -1,0 +1,34 @@
+                 ┌─────────────────┐
+                 │  INGESTION      │
+                 │  (Adapter → API)│
+                 └────────┬────────┘
+                          │  POST /v1/messages (normalized envelope)
+                          ▼
+                 ┌─────────────────┐
+                 │  Message Store  │  (raw + normalized, S3-URI in Supabase)
+                 └────────┬────────┘
+                          │  emits: message.received
+                          ▼
+                 ┌─────────────────┐
+                 │  AI Orchestrator│
+                 │  · Preprocess   │
+                 │  · Classify     │
+                 │  · Extract      │
+                 │  · Validate     │
+                 └────────┬────────┘
+                          │  emits: message.extracted
+                          ▼
+                 ┌─────────────────┐
+                 │  Rule Engine    │  (per-tenant JSON rules)
+                 └────────┬────────┘
+                          │  emits: action.dispatch
+                          ▼
+                 ┌─────────────────┐
+                 │  n8n Runtime    │  ← retries, DLQ, human-in-the-loop
+                 └────────┬────────┘
+                          │
+      ┌─────────┬─────────┼─────────┬─────────┬──────────┐
+      ▼         ▼         ▼         ▼         ▼          ▼
+   CRM Lead  Ticket    DB Save   Sheets    Slack     Email/Cal/Webhook
+      │         │         │         │         │          │
+      └─────────┴────► [Audit Log] ◄──────────┴──────────┘
